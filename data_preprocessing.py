@@ -6,7 +6,7 @@
 import pandas as pd
 import numpy as np
 
-df = pd.read_excel('/content/BQ-Assignment-Data-Analytics.xlsx')
+df = pd.read_excel('BQ-Assignment-Data-Analytics.xlsx')
 
 # ---------------------------------------
 # convert date to month names and remove date
@@ -15,9 +15,9 @@ import calendar
 df.Date = df.Date.apply(lambda x: str(calendar.month_abbr[x.month])+' 20')
 all_col = list(df.columns)
 all_col.remove('Item')
-dd = df.groupby('Date')[all_col].sum()
+gp_by_date = df.groupby('Date')[all_col].sum()
 
-date_order = dd.index
+date_order = gp_by_date.index
 date_order.unique()
 
 for i in df.Date.unique():
@@ -28,6 +28,7 @@ df.drop(['Date','Sales'],inplace=True,axis=1)
 
 # ---------------------------------------
 # add Item Sort Order to DataFrame
+
 all_col=[]
 all_col.append('Item Sort Order')
 for i in date_order.unique():
@@ -46,13 +47,19 @@ gp_by_data['Item Sort Order'] = sort_order_df['Item Sort Order']
 # ---------------------------------------
 # add Item Type to DataFrame
 
-gg = df.groupby('Item')['Item Type'].unique()
-gg = pd.DataFrame(gg,columns=['Item Type'])
-gg['Item Type'] = gg['Item Type'].apply(lambda x: str(x).replace("[","") )  # remove unnecessary characters
-gg['Item Type'] = gg['Item Type'].apply(lambda x:str(x).replace("]","") )   # remove unnecessary characters
-gg['Item Type'] = gg['Item Type'].apply(lambda x:str(x).replace("'","") )   # remove unnecessary characters
-gg['Item Type'] = gg['Item Type'].apply(lambda x:str(x).replace("'","") )   # remove unnecessary characters
+gp_by_item_type = df.groupby('Item')['Item Type'].unique()
+gp_by_item_type = pd.DataFrame(gp_by_item_type,columns=['Item Type'])
+gp_by_item_type['Item Type'] = gp_by_item_type['Item Type'].apply(lambda x: str(x).replace("[","") )  # remove unnecessary characters
+gp_by_item_type['Item Type'] = gp_by_item_type['Item Type'].apply(lambda x:str(x).replace("]","") )   # remove unnecessary characters
+gp_by_item_type['Item Type'] = gp_by_item_type['Item Type'].apply(lambda x:str(x).replace("'","") )   # remove unnecessary characters
+gp_by_item_type['Item Type'] = gp_by_item_type['Item Type'].apply(lambda x:str(x).replace("'","") )   # remove unnecessary characters
 
-gp_by_data['Item Type'] = gg
+gp_by_data['Item Type'] = gp_by_item_type
+gp_by_data = gp_by_data.sort_values(by='Item Sort Order',ascending=True)
 
-gp_by_data.to_excel('cleaned2.xlsx')
+# ----------------------------------------------
+# Export the DataFrame as 'cleaned_data.xlsx'
+
+gp_by_data.to_excel('cleaned_data.xlsx')
+
+# -----------------------( END OF THE PROGRAM )-----------------------------

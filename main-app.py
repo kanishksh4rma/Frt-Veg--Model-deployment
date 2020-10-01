@@ -13,8 +13,9 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 ext_url = 'https://github.com/plotly/dash-app-stylesheets/blob/master/dash-docs-tutorial-stylesheet1.css'
 app.css.append_css({'external_url': ext_url})
 
-df = pd.read_excel('cleaned2.xlsx')
-df2 = pd.read_excel('cleaned2.xlsx')
+df = pd.read_excel('cleaned_data.xlsx')
+df2 = pd.read_excel('cleaned_data.xlsx')
+df2 = df2.sort_values(by='Item Sort Order',ascending=True)
 df2 = df2.drop('Item Type',axis=1)
 # -------------------------------------------------------------------------------------
 # Start Dash Coding
@@ -69,7 +70,7 @@ app.layout = html.Div([
     html.Hr(),
     dbc.Alert([
         html.H4("Success! ", className="alert-heading"),
-        "Your data saved in your local drive. It should be saved as 'BQ_Custom.xlsx'.",
+        "Your data saved in your local drive. It should be saved as 'BQ-Custom-by--Kanishk_sharma.xlsx'.",
         ],
         id="alert-fade",
         dismissable=True,
@@ -103,14 +104,16 @@ def update_main_table(value,n_clicks):
         dff = df2
 
     if 'FRT' in value:
-        dff = df[df['Item Type'] == 'Fruit']
+        dff = df[df['Item Type'] == 'uFruit']
         dff = dff.drop('Item Type',axis=1)
+        dff = dff.sort_values(by='Item Sort Order',ascending=True)
     elif 'VEG' in value:
-         dff = df[df['Item Type'] == 'Vegetable']
-         dff = dff.drop('Item Type',axis=1)
+        dff = df[df['Item Type'] == 'uVegetable']
+        dff = dff.drop('Item Type',axis=1)
+        dff = dff.sort_values(by='Item Sort Order',ascending=True)
     
     if n_clicks > 0:
-        dff.to_excel('BQ_Custom.xlsx', index=False)
+        dff.to_excel('BQ-Custom-by--Kanishk_Sharma.xlsx', index=False)
     return dff.to_dict('recordes')
 
 @app.callback(
